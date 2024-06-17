@@ -3,7 +3,7 @@ pipeline{
    //options{}
    //triggers{}
    tools {
-      maven 'maven3.9.6'
+      maven 'Maven 3.9.7'
    }
    stages{
     stage('1.CloneCode'){
