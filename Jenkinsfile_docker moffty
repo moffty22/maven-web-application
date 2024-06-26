@@ -52,7 +52,7 @@ pipeline{
     }
   stage('emailNotification'){
     steps{
-     // sh "echo deployment successful"
+     sh "echo deployment successful"
     }
   }
 
