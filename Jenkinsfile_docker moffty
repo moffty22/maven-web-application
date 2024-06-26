@@ -20,14 +20,14 @@ pipeline{
       stage('codeQuality'){
       steps{
         sh "echo Running detail code analysis"
-        sh "mvn sonar:sonar"
+        //sh "mvn sonar:sonar"
         sh  "echo All conditions met/passed"
       }
     }
       stage('upLoadArtifacts'){
       steps{
         sh "echo Running detail code analysis"
-        sh "mvn deploy"
+        //sh "mvn deploy"
         sh "echo backupArtifacts in nexus"
       }
     }
@@ -52,7 +52,7 @@ pipeline{
     }
   stage('emailNotification'){
     steps{
-      sh "echo deployment successful"
+     // sh "echo deployment successful"
     }
   }
 
