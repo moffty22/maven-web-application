@@ -1,4 +1,4 @@
-FROM tomcat:8.0.20-jre8
+FROM tomcat:11.0.0-M21-jdk21-temurin-jammy
 #### Good stuff
 ## jesus is Lord
 # thanks team members
