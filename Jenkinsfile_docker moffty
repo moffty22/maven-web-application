@@ -35,7 +35,7 @@ pipeline{
       steps{
         sh "echo creating docker image"
         sh "docker build -t edsam22/maven-web-app . "
-        sh "docker push edsam22/maven-web-app"
+       // sh "docker push edsam22/maven-web-app"
       }
     }
     stage('UnDeploy'){
