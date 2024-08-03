@@ -1,5 +1,5 @@
 pipeline{
-   agent {'agent2'}  
+   agent {'agent1'}  
    //options{}
    //triggers{}
    tools {
