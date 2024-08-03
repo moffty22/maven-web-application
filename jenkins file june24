@@ -3,7 +3,7 @@ pipeline{
    //options{}
    //triggers{}
    tools {
-      maven 'Maven 3.9.7'
+      maven 'maven3.9.8'
    }
    stages{
     stage('1.CloneCode'){
@@ -30,7 +30,7 @@ pipeline{
     }
     stage('4.UploadArtifacts'){
       steps{
-          sh "mvn deploy" 
+          //sh "mvn deploy" 
           sh "echo artifacts uploaded successfully"
           sh "echo I am now a Build and Release Engineer"
           sh "echo Build and release completed"         
@@ -38,8 +38,8 @@ pipeline{
     }
     stage('5.Deploy2UAT'){
       steps{
-        sh "echo Deployment is ready for the client review"
-        sh "echo using deploy to container plugin" 
+        //sh "echo Deployment is ready for the client review"
+       //sh "echo using deploy to container plugin" 
         deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://172.31.30.76:8080/')], contextPath: null, war: 'target/*war'
 
       }
@@ -47,7 +47,7 @@ pipeline{
    
     stage('6.ManualApproval'){
       steps{
-       sh "echo Please Review and confirm within 5 days"
+      //sh "echo Please Review and confirm within 5 days"
        timeout(time:5, unit:'DAYS'){
        input message: 'Application ready for deployment, Please review and approve'     
        }
@@ -56,7 +56,7 @@ pipeline{
     }
     stage('7.Deploy2Prod'){
       steps{
-        sh "echo application reviewed, approved and ready for the market" 
+        //sh "echo application reviewed, approved and ready for the market" 
         deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://172.31.30.76:8080/')], contextPath: null, war: 'target/*war'
 
       }
