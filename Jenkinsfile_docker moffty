@@ -17,6 +17,7 @@ pipeline{
         echo "echo test successful and backupArtifacts created"
       }
     }
+*/
       stage('codeQuality'){
       steps{
         sh "echo Running detail code analysis"
@@ -57,4 +58,5 @@ pipeline{
   }
 
   }
+*/
 }
