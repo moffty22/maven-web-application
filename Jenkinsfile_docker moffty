@@ -34,7 +34,7 @@ pipeline{
       stage('predeployment'){
       steps{
         sh "echo creating docker image"
-        sh "docker build -t edsam-tutors:1 . "
+       // sh "docker build -t edsam-tutors:1 . "
        // sh "docker push edsam22/practice"
       }
     }
