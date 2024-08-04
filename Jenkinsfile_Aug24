@@ -19,7 +19,14 @@ pipeline{
        sh "mvn clean package"
       }
 }
+stage('predeployment'){
+      steps{
+        sh "echo creating docker image"
+        sh "docker build -t edsam-tutors:1 . "
+       // sh "docker push edsam22/practice"
+      }
     }
+}
 /*
     stage('3.CodeQuality'){
       steps{
