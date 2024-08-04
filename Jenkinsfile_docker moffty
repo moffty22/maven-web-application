@@ -1,13 +1,15 @@
 pipeline{
-  agent any 
-  tools{
-    maven "maven3.9.8"
-  }
-  stages{
-    stage('GitClone'){
+   agent any
+   //options{}
+   //triggers{}
+   tools {
+      maven 'maven3.9.8'
+   }
+   stages{
+    stage('1.CloneCode'){
       steps{
-        echo "cloning the lastest applications version"
-        git "https://github.com/moffty22/maven-web-application.git"
+         sh  "echo cloning the latest app version"
+         git 'https://github.com/moffty22/maven-web-application'
       }
     }
       stage('Test+Build'){
