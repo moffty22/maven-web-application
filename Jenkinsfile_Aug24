@@ -4,6 +4,7 @@ pipeline{
    //triggers{}
    tools {
       maven 'maven3.9.8'
+      dockerTool 'docker'
    }
    stages{
     stage('1.CloneCode'){
