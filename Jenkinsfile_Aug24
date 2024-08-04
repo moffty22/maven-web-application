@@ -4,14 +4,13 @@ pipeline{
    //triggers{}
    tools {
       maven 'maven3.9.8'
-      dockerTool 'docker'
-   }
+         }
 environment {
         // Define environment variables if needed, e.g., Docker registry credentials
-        DOCKER_REGISTRY = 'docker.io'
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-        IMAGE_NAME = 'my-maven-app'
-        IMAGE_TAG = 'latest'
+        DOCKER_REGISTRY = 'edsam22/practice'
+        DOCKER_CREDENTIALS_ID = 'dockerhub'
+        IMAGE_NAME = 'practice'
+        IMAGE_TAG = 'v2'
     }
 
    stages{
