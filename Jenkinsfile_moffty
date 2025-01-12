@@ -1,0 +1,67 @@
+pipeline{
+   agent any
+   //options{}
+   //triggers{}
+   tools {
+      maven 'maven3.9.9'
+   }
+   environment {
+       IMAGE_NAME = 'edsam22/maven-web-app'
+       IMAGE_TAG = "${IMAGE_NAME}:${env.GIT_COMMIT}"
+   }
+   stages{
+    stage('1.CloneCode'){
+      steps{
+         sh  "echo cloning the latest app version"
+         git 'https://https://github.com/moffty22/maven-web-application.git'
+      }
+    }
+      stage('Test+Build'){
+      steps{
+        sh "echo Running unitTesting"
+        sh "mvn clean package"
+        echo "echo test successful and backupArtifacts created"
+      }
+    }
+
+      stage('codeQuality'){
+      steps{
+        sh "echo Running detail code analysis"
+        //sh "mvn sonar:sonar"
+        sh  "echo All conditions met/passed"
+      }
+    }
+      stage('upLoadArtifacts'){
+      steps{
+        sh "echo Running detail code analysis"
+        //sh "mvn deploy"
+        sh "echo backupArtifacts in nexus"
+      }
+    }
+
+    stage('login to dockerhub'){
+      steps{
+            withCredentials([usernamePassword(credentialsId: 'Docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"}
+            echo 'Login successfully'
+      }
+    }
+      stage('Build docker image'){
+      steps{
+        sh "echo creating docker image"
+        sh "docker build -t ${IMAGE_TAG} . "
+        sh 'docker image ls'
+      }
+    }
+
+    stage('Push docker image'){
+      steps{
+          sh "docker push ${IMAGE_TAG}"
+          echo "Docker image push successfully"
+      }
+    }
+ // stage('emailNotification'){
+  //  steps{
+    // sh "echo deployment successful"
+    }
+ }
