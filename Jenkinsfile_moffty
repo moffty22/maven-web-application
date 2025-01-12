@@ -13,7 +13,7 @@ pipeline{
     stage('1.CloneCode'){
       steps{
          sh  "echo cloning the latest app version"
-         git 'https://https://github.com/moffty22/maven-web-application.git'
+         git 'https://github.com/moffty22/maven-web-application.git'
       }
     }
       stage('Test+Build'){
