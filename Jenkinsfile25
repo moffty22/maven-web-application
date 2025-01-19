@@ -14,7 +14,7 @@ pipeline {
         ARGOCD_TOKEN = credentials('argocd-token')
         GITHUB_TOKEN = credentials('github')
         VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
-        BUILD_NUMBER=${BUILD_NUMBER}
+        BUILD_NUMBER = ${BUILD_NUMBER}
     }
 
     stages {
