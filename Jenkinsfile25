@@ -76,6 +76,8 @@ pipeline {
         stage('Update Manifest') {
             steps {
                dir('maven-web-app-deploy-k8') {
+                     git 'https://github.com/moffty22/maven-web-app-deploy-k8.git'
+                    sh 'ls -l stage/'
                     sh '''
                         sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" stage/deployment.yaml
                         cat deployment.yaml
