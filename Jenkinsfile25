@@ -75,9 +75,9 @@ pipeline {
 
         stage('Update Manifest') {
             steps {
-                dir('maven-web-app-deploy-k8') {
+               //dir('maven-web-app-deploy-k8') {
                     sh '''
-                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" /blob/main/stage/deployment.yaml
+                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
                         cat deployment.yaml
                     '''
                 }
