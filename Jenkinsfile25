@@ -14,6 +14,7 @@ pipeline {
         ARGOCD_TOKEN = credentials('argocd-token')
         GITHUB_TOKEN = credentials('github')
         VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
+        BUILD_NUMBER=${BUILD_NUMBER}
     }
 
     stages {
@@ -79,7 +80,8 @@ pipeline {
                     git branch: 'main', url: 'https://github.com/moffty22/maven-web-app-deploy-k8.git', credentialsId: 'github'
                     sh 'ls -l stage/'
                     sh '''
-                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" stage/deployment.yaml
+                       // sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" stage/deployment.yaml
+                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
                         cat deployment.yaml
                     '''
                 }
