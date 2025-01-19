@@ -80,6 +80,7 @@ pipeline {
                     git branch: 'main', url: 'https://github.com/moffty22/maven-web-app-deploy-k8.git', credentialsId: 'github'
                     sh 'ls -l stage/'
                     sh '''
+                        sh 'chmod +x /home/ubuntu/workspace/mvn-project1/maven-web-app-deploy-k8@tmp/durable-ab527e00/script.sh.copy'
                        // sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" stage/deployment.yaml
                         sed -i "s/edsam22/maven-web-app.*/${IMAGE_NAME}:${VERSION}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
                        // sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
