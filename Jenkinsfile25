@@ -76,16 +76,19 @@ pipeline {
 
         stage('Clone Repo') {
             steps {
-              script {
-                if (fileExists('maven-web-app-deploy-k8')
-                echo 'Clone repo already exisys -Pulling latest changes'
-                
-                dir('maven-web-app-deploy-k8'){
-                  sh 'git pull'
+                script {
+                    if (fileExists('maven-web-app-deploy-k8')) {
+                        echo 'Repo already exists - Pulling latest changes'
+                        dir('maven-web-app-deploy-k8') {
+                            sh 'git pull'
+                        }
+                    } else {
+                        echo 'Repo does not exist - Cloning the repo'
+                        sh 'git clone https://github.com/moffty22/maven-web-app-deploy-k8.git'
+                    }
+                }
             }
-        } else {
-                echo 'Repo does not exist - cloning the repo"
-                sh 'git clone https://github.com/moffty22/maven-web-app-deploy-k8.git'
+        }
 
         stage('Update Manifest') {
             steps {
