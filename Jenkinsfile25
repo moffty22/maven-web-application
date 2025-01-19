@@ -101,8 +101,6 @@ pipeline {
                dir('maven-web-app-deploy-k8/stage') {
                     sh '''
                         sed -i "s#edsam22/maven-web-app.*#${IMAGE_REPO}/${IMAGE_NAME}:${VERSION}#g" deployment.yaml
-                        //sed -i "s/edsam22/maven-web-app.*/${IMAGE_NAME}:${VERSION}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
-                       // sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
                         cat deployment.yaml
                     '''
                 }
