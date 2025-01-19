@@ -22,7 +22,7 @@ pipeline{
          git 'https://github.com/moffty22/maven-web-application.git'
       }
     }
-      stage('Test+Build'){
+    stage('Test+Build'){
       steps{
         sh "echo Running unitTesting"
         sh "mvn clean package"
@@ -31,14 +31,14 @@ pipeline{
     }
     }
 
-      stage('codeQuality'){
+    stage('codeQuality'){
       steps{
         sh "echo Running detail code analysis"
         //sh "mvn sonar:sonar"
         sh  "echo All conditions met/passed"
       }
     }
-      stage('upLoadArtifacts'){
+    stage('upLoadArtifacts'){
       steps{
         sh "echo Running detail code analysis"
         //sh "mvn deploy"
@@ -53,7 +53,7 @@ pipeline{
            
       }
     }
-      stage('Build docker image'){
+    stage('Build docker image'){
       steps{
         sh "echo creating docker image"
         sh "docker build -t ${IMAGE_TAG} ."
