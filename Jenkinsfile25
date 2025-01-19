@@ -80,6 +80,9 @@ pipeline {
                     if (fileExists('maven-web-app-deploy-k8')) {
                         echo 'Repo already exists - Pulling latest changes'
                         dir('maven-web-app-deploy-k8') {
+                            // Ensure we are on the correct branch (main) and set upstream
+                            sh 'git checkout main'
+                            sh 'git branch --set-upstream-to=origin/main main'
                             sh 'git pull'
                         }
                     } else {
@@ -89,6 +92,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Update Manifest') {
             steps {
