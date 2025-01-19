@@ -104,7 +104,7 @@ pipeline {
                 }
             }
         }
-maven-web-app-deploy-k8/maven-web-app-deploy-k8
+
         stage('Commit & Push') {
             steps {
                 dir('maven-web-app-deploy-k8') {
