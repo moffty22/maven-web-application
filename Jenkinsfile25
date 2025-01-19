@@ -44,7 +44,7 @@ pipeline {
         stage('Upload Artifacts') {
             steps {
                 sh "echo Running artifact upload"
-                // Uncomment if you deploy artifacts to Nexus
+                // Uncomment if you deploy to Nexus
                 // sh "mvn deploy"
                 sh "echo Artifacts backed up in Nexus"
             }
