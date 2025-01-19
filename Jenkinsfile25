@@ -77,7 +77,7 @@ pipeline {
             steps {
                 dir('maven-web-app-deploy-k8') {
                     sh '''
-                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" /stage/deployment.yaml
+                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" /blob/main/stage/deployment.yaml
                         cat deployment.yaml
                     '''
                 }
