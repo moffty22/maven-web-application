@@ -8,8 +8,13 @@ pipeline{
    environment {
        IMAGE_NAME = 'edsam22/maven-web-app'
        IMAGE_TAG = "${IMAGE_NAME}:${env.GIT_COMMIT}"
-      // DOCKERHUB_CREDENTIALS_ID = credentials('docker_cred')
+       //DOCKERHUB_CREDENTIALS_ID = credentials('docker_cred')
+       ARGOCD_TOKEN = credentials('argocd-token')
+       GITHUB_TOKEN = credentials('github')
+       VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
+
    }
+
    stages{
     stage('1.CloneCode'){
       steps{
@@ -23,6 +28,7 @@ pipeline{
         sh "mvn clean package"
         echo "echo test successful and backupArtifacts created"
       }
+    }
     }
 
       stage('codeQuality'){
@@ -45,8 +51,6 @@ pipeline{
            withCredentials([usernamePassword(credentialsId: 'docker_cred', passwordVariable: 'password', usernameVariable: 'username')]) {
            sh "echo $password | docker login -u $username --password-stdin"}
            
-             //sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            echo 'Login successfully'
       }
     }
       stage('Build docker image'){
@@ -63,8 +67,30 @@ pipeline{
           echo "Docker image push successfully"
       }
     }
- // stage('emailNotification'){
-  //  steps{
-    // sh "echo deployment successful"
+
+    stage('Update Manifest') {
+      steps {
+        dir('maven-web-app-deploy-k8') {
+            sh '''
+                sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" deployment.yaml
+                cat deployment.yaml
+            '''
+        }
     }
- }
+}
+    stage('Commit & Push') {
+      steps {
+        dir('maven-web-app-deploy-k8') {
+            sh '''
+               git config --global user.email 'amponsah.edward@gmail.com' 
+               git remote set-url origin https://$GITHUB_TOKEN@github.com/moffty22/maven-web-app-deploy-k8.git
+               git checkout main
+               git add -A
+               git commit -m "Updated image version for Build - $VERSION"
+               git push origin main
+                
+            '''
+        }
+    }
+}
+}
