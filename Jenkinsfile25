@@ -74,14 +74,27 @@ pipeline {
             }
         }
 
+        stage('Clone Repo') {
+            steps {
+              script {
+                if (fileExists('maven-web-app-deploy-k8')
+                echo 'Clone repo already exisys -Pulling latest changes'
+                
+                dir('maven-web-app-deploy-k8'){
+                  sh 'git pull'
+            }
+        } else {
+                echo 'Repo does not exist - cloning the repo"
+                sh 'git clone https://github.com/moffty22/maven-web-app-deploy-k8.git'
+
         stage('Update Manifest') {
             steps {
-                    git branch: 'main', url: 'https://github.com/moffty22/maven-web-app-deploy-k8.git', credentialsId: 'github'
-                    sh 'ls -l stage/'
-               //dir('maven-web-app-deploy-k8') {
+                    //git branch: 'main', url: 'https://github.com/moffty22/maven-web-app-deploy-k8.git', credentialsId: 'github'
+                   // sh 'ls -l stage/'
+               dir('maven-web-app-deploy-k8/stage') {
                     sh '''
-                        // sed -i "s#edsam22/maven-web-app.*#${IMAGE_NAME}:${VERSION}#g" stage/deployment.yaml
-                        sed -i "s/edsam22/maven-web-app.*/${IMAGE_NAME}:${VERSION}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
+                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_REPO}/${IMAGE_NAME}:${VERSION}#g" deployment.yaml
+                        //sed -i "s/edsam22/maven-web-app.*/${IMAGE_NAME}:${VERSION}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
                        // sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" maven-web-app-deploy-k8/blob/main/stage/deployment.yaml
                         cat deployment.yaml
                     '''
