@@ -96,17 +96,15 @@ pipeline {
 
         stage('Update Manifest') {
             steps {
-                    //git branch: 'main', url: 'https://github.com/moffty22/maven-web-app-deploy-k8.git', credentialsId: 'github'
-                   // sh 'ls -l stage/'
                dir('maven-web-app-deploy-k8/stage') {
                     sh '''
-                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_REPO}/${IMAGE_NAME}:${VERSION}#g" deployment.yaml
+                        sed -i "s#edsam22/maven-web-app.*#${IMAGE_TAG}#g" deployment.yaml
                         cat deployment.yaml
                     '''
                 }
             }
         }
-
+maven-web-app-deploy-k8/maven-web-app-deploy-k8
         stage('Commit & Push') {
             steps {
                 dir('maven-web-app-deploy-k8') {
