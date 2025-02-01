@@ -1,67 +1,103 @@
-pipeline{
-   agent any
-   //options{}
-   //triggers{}
-   tools {
-      maven 'maven3.9.9'
-   }
-   environment {
-       IMAGE_NAME = 'edsam22/maven-web-app'
-       IMAGE_TAG = "${IMAGE_NAME}:${env.GIT_COMMIT}"
-   }
-   stages{
-    stage('1.CloneCode'){
-      steps{
-         sh  "echo cloning the latest app version"
-         git 'https://github.com/moffty22/maven-web-application.git'
-      }
+pipeline {
+    agent any
+    //options{}
+    //triggers{}
+    
+    tools {
+        maven 'maven3.9.9'
     }
-      stage('Test+Build'){
-      steps{
-        sh "echo Running unitTesting"
-        sh "mvn clean package"
-        echo "echo test successful and backupArtifacts created"
-      }
+    
+    environment {
+        IMAGE_NAME = 'edsam22/maven-web-app'
+        IMAGE_TAG = "${IMAGE_NAME}:${env.GIT_COMMIT}"
+        IMAGE_REPO = "maven-web-app-deploy-k8"
+        //ARGOCD_TOKEN = credentials('argocd-token')
+        GITHUB_TOKEN = credentials('github')
+        VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
+        AWS_REGION = 'eu-west-2' // Update to your AWS region
+        SCANNER_HOME=tool 'sonar-scanner'
+        AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
+        
     }
 
-      stage('codeQuality'){
-      steps{
-        sh "echo Running detail code analysis"
-        //sh "mvn sonar:sonar"
-        sh  "echo All conditions met/passed"
-      }
-    }
-      stage('upLoadArtifacts'){
-      steps{
-        sh "echo Running detail code analysis"
-        //sh "mvn deploy"
-        sh "echo backupArtifacts in nexus"
-      }
-    }
+    stages {
+        stage('1. Clone Code') {
+            steps {
+                sh "echo Cloning the latest app version"
+                git 'https://github.com/moffty22/maven-web-application.git'
+            }
+        }
 
-    stage('login to dockerhub'){
-      steps{
-            withCredentials([usernamePassword(credentialsId: 'Docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"}
-            echo 'Login successfully'
-      }
-    }
-      stage('Build docker image'){
-      steps{
-        sh "echo creating docker image"
-        sh "docker build -t ${IMAGE_TAG} . "
-        sh 'docker image ls'
-      }
-    }
+        stage('Test + Build') {
+            steps {
+                sh "echo Running unit tests"
+                sh "mvn clean package"
+                sh "echo Test successful and backup artifacts created"
+            }
+        }
 
-    stage('Push docker image'){
-      steps{
-          sh "docker push ${IMAGE_TAG}"
-          echo "Docker image push successfully"
-      }
-    }
- // stage('emailNotification'){
-  //  steps{
-    // sh "echo deployment successful"
-    }
- }
+        stage('Sonarqube Analysis') {
+            steps {
+                    withSonarQubeEnv('sonar-server') {
+                        sh ''' 
+                        mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=mvn-web-app \
+                        -Dsonar.host.url=http://18.133.155.141:9000 \
+                        -Dsonar.login=sqp_0fb260e8c685869193c4882b37b3ff4ac4d56d00
+                        '''
+                    }
+                }
+            }
+        
+    
+        stage('Upload Artifacts') {
+            steps {
+                sh "echo Running artifact upload"
+                // Uncomment if you deploy to Nexus
+                // sh "mvn deploy"
+                sh "echo Artifacts backed up in Nexus"
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker_cred', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    sh "echo $password | docker login -u $username --password-stdin"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "echo Creating Docker image"
+                sh "docker build -t ${IMAGE_TAG} ."
+                sh 'docker image ls'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh "docker push ${IMAGE_TAG}"
+                sh "echo Docker image pushed successfully"
+            }
+        }
+        
+        stage('Deploy using Helm') {
+            steps {
+                withKubeConfig(
+                    credentialsId: 'kubeconfig',  // This is the Jenkins credentials ID 
+                    namespace: 'webapp'           // Namespace where your app will be deployed
+                ) {
+                    sh """
+                    echo Deploying to Kubernetes using Helm
+                    helm upgrade --install webapp ./mvn-chart \
+                        --set image.repository=${IMAGE_NAME} \
+                        --set image.tag=${env.GIT_COMMIT} \
+                        --set app.version=${VERSION} \
+                        --namespace webapp --create-namespace
+                    """
+                }
+            }
+        }
+        }
+}
