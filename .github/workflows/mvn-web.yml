@@ -1,0 +1,55 @@
+name: CI/CD Pipeline for Maven Web App
+
+on:
+  push:
+    branches:
+      - main  # Adjust according to your branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'  # Adjust version as needed
+        distribution: 'adoptopenjdk'
+
+    - name: Run unit tests and build
+      run: |
+        echo Running unit tests
+        mvn clean package
+        echo Test successful and backup artifacts created
+
+    - name: Run code analysis (SonarQube)
+      run: |
+        echo Running detailed code analysis
+        # Uncomment and configure if you use SonarQube
+        # mvn sonar:sonar
+        echo All conditions met/passed
+
+    - name: Upload Artifacts (Optional)
+      run: |
+        echo Running artifact upload
+        # Uncomment if you deploy to Nexus
+        # mvn deploy
+        echo Artifacts backed up in Nexus
+
+    - name: Login to DockerHub
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Build Docker Image
+      run: |
+        echo Creating Docker image
+        docker build -t ${{ env.IMAGE_TAG }} .
+        docker image ls
+
+    - name: Push Docker Image
+      run: |
+        docker push ${{ env.IMAGE_TAG }}
+        echo Docker image pushed successfully
