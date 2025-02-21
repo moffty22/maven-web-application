@@ -3,7 +3,7 @@ name: CI/CD Pipeline for Maven Web App
 on:
   push:
     branches:
-      - main  # Adjust according to your branch
+      - master  # Adjust according to your branch
 
 jobs:
   build:
