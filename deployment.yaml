@@ -13,6 +13,6 @@ spec:
     spec:
       containers:
       - name: myapp
-        image: edsam22/maven-web-app:48
+        image: edsam22/maven-web-app:49
         ports:
         - containerPort: 8080
